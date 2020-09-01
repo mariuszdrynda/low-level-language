@@ -2,9 +2,91 @@ use std::str::FromStr;
 
 grammar;
 
-pub Top: i32 = {
-    <n:Num> => n,
-    "(" <t:Top> ")" => t,
+pub Top: i32 = List_of_globals => 0;
+
+List_of_globals: () = {
+    Global+ => (),
+} 
+
+Global: () = {
+    Global_function,
+    Function
+}
+
+Global_function: () = Global_function_name "(" Arguments ")";
+
+Global_function_name: () = {
+    "declare_set_global",
+    "include",
+    //TODO
+}
+
+Function: () = "fn" Name "(" ")" "-" ">" Returned_type "{" Statements "}"; //todo
+
+Statements: () = Statement+;
+
+Statement: () = {
+    Function_call ";",
+    "loop" Name "{" Statements "}",
+    "case" "(" Arguments ")" "{" Case_body "}"
 };
 
-Num: i32 = r"[0-9]+" => i32::from_str(<>).unwrap();
+Case_body: () = {
+    Case_body Case,
+    Case
+};
+
+Case: () = {
+    Argument "-" ">" "{" Statements "}"
+};
+
+Function_call: () = Name "(" Arguments ")";
+
+Arguments: () = {
+    Arguments "," Argument,
+    Argument
+};
+
+Argument: () = {
+    Int,
+    Name,
+    Function_call,
+    Float,
+    Char,
+    Str,
+    "true",
+    "false",
+    "(" ")",
+};
+
+Int: i32 = r"[0-9]+" => i32::from_str(<>).unwrap();
+
+Name: String = <i:r"[_a-zA-Z][_a-zA-Z0-9]*"> => i.to_string();
+
+Float: () = r"[0-9]+.[0-9]+";
+
+Char: () = r"'.'";
+
+Str: () = r#"".*""#;
+
+Returned_type: () = {
+    "(" ")",
+    Name,
+    //TODO
+}
+
+match {
+    // "true",
+    // "false",
+    // "(",
+    // ")",
+    // r"''",
+    r"[0-9]+.[0-9]+",
+    // r"[_a-zA-Z][_a-zA-Z0-9]+", //+-*/&^%!#$.,?
+    // r"\s*" => { },
+    // r"//[^\n\r]*[\n\r]*" => { },
+    // r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { },
+} else {
+    r"[0-9]+",
+    _
+}
