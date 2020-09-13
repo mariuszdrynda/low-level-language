@@ -1,77 +1,76 @@
 use std::str::FromStr;
+use crate::ast::AST;
 
 grammar;
 
-pub Top: i32 = List_of_globals => 0;
-
-List_of_globals: () = {
-    Global+ => (),
+pub Top: Vec<Box<AST>> = {
+    Global+ => <>,
 } 
 
-Global: () = {
+Global: Box<AST> = {
     Global_function,
     Function
 }
 
-Global_function: () = Global_function_name "(" Arguments ")";
+Global_function: Box<AST> = <n:Global_function_name> "(" <a:Arguments<Argument>> ")"
+    => Box::new(AST::FunctionCall(n, a));
 
-Global_function_name: () = {
-    "declare_set_global",
-    "include",
+Global_function_name: String = {
+    <i:"declare_set_global"> => i.to_string(),
+    <i:"include"> => i.to_string(),
     //TODO
 }
 
-Function: () = "fn" Name "(" ")" "-" ">" Returned_type "{" Statements "}"; //todo
+Function: Box<AST> = "fn" <n:Name> "(" ")" "-" ">" <r:Returned_type> "{" <s:Statements> "}"
+    => Box::new(AST::Function(n, r, s)); //todo
 
-Statements: () = Statement+;
+Statements: Vec<Box<AST>> = Statement+ => <>;
 
-Statement: () = {
-    Function_call ";",
-    "loop" Name "{" Statements "}",
-    "case" "(" Arguments ")" "{" Case_body "}"
+Statement: Box<AST> = {
+    <f:Function_call> ";" => f,
+    "loop" <n:Name> "{" <s:Statements> "}" => Box::new(AST::Loop(n, s)),
+    "match" "(" <a:Arguments<Argument>> ")" "{" <c:Case_body> "}" => Box::new(AST::Match(a, c)),
 };
 
-Case_body: () = {
-    Case_body Case,
-    Case
+Case_body: Vec<Box<AST>> = Case+ => <>;
+
+Case: Box<AST> = {
+    <a:Argument> "-" ">" "{" <s:Statements> "}" => Box::new(AST::Case(a, s)),
 };
 
-Case: () = {
-    Argument "-" ">" "{" Statements "}"
+Function_call: Box<AST> = <n:Name> "(" <a:Arguments<Argument>> ")" => Box::new(AST::FunctionCall(n, a));
+
+Arguments<T>: Vec<Box<AST>> = <v:(<T> ",")*> <e:T> => {
+    let mut v = v;
+    v.push(e);
+    v
 };
 
-Function_call: () = Name "(" Arguments ")";
-
-Arguments: () = {
-    Arguments "," Argument,
-    Argument
+Argument: Box<AST> = {
+    Int => Box::new(AST::Int(<>)),
+    Name => Box::new(AST::Name(<>)),
+    Function_call => <>,
+    Float => Box::new(AST::Float(<>)),
+    Char => Box::new(AST::Char(<>)),
+    Str => Box::new(AST::Str(<>)),
+    "true" => Box::new(AST::Boolean(true)),
+    "false" => Box::new(AST::Boolean(false)),
+    "(" ")" => Box::new(AST::Void),
 };
 
-Argument: () = {
-    Int,
-    Name,
-    Function_call,
-    Float,
-    Char,
-    Str,
-    "true",
-    "false",
-    "(" ")",
-};
-
-Int: i32 = r"[0-9]+" => i32::from_str(<>).unwrap();
+Int: i64 = r"[0-9]+" => i64::from_str(<>).unwrap();
 
 Name: String = <i:r"[_a-zA-Z][_a-zA-Z0-9]*"> => i.to_string();
 
-Float: () = r"[0-9]+.[0-9]+";
+Float: f64 = r"[0-9]+.[0-9]+" => f64::from_str(<>).unwrap();
 
-Char: () = r"'.'";
+Char: char = r"'.'" => '\0'; //todo
 
-Str: () = r#"".*""#;
+Str: String = <i:r#"".*""#> => i.to_string();
 
-Returned_type: () = {
-    "(" ")",
-    Name,
+Returned_type: String = {
+    "(" ")" => String::from("()"),
+    Name => <>,
     //TODO
 }
 
