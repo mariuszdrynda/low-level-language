@@ -1,5 +1,5 @@
-include(printf)
-fn main()->int{
-    printf("Hello World!\n");
-    return(0);
+printf = import(stdio.printf)
+main = fn(){
+    io = printf("Hello World!\n")
+    return = 0
 }
