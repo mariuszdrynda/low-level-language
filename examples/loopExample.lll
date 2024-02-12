@@ -1,0 +1,45 @@
+# C
+#while((c = getchar()) != EOF)
+#	if(c >= '0' && c <= '9') ++ndigit[c-'0'];
+#	else if() ++nwhite;
+#	else ++nother;
+# LLL
+
+Haha = struct{i: Int, f: Float, str: Array.Char.20};
+
+Data = union{i: Int, f: Float, str: Array.Char.20};
+fn unionExample(x: i32, y: i32, z:i64) -> Unit {
+    data = Data();
+    printf( "Memory size occupied by data : %d\n", sizeof(data));
+    data.i = 10; # data.i active union member
+    data.f = 220.5; # data.f active
+    strcpy(data.str, "C Programming"); # data.str active
+    printf("data.i : %d\n", data.i); # ub: access to inactive union member
+    printf("data.f : %f\n", data.f); # ub
+    printf("data.str : %s\n", data.str); # ok
+}
+
+Heha = struct{i: Int, f: Haha};
+fn main() -> Unit {
+    nwhite = 0;
+    nother = 0;
+    ndigit = Array(Char, 10);
+    while = label();
+    c = getchar();
+    match neq(c, EOF) {
+        True => {goto(whileEnd);}
+        False => {nop();}
+    }
+    match True {
+        and(geq(c, '0'), leq(c,'9')) => {
+            tmp0 = sub(c, '0');
+            tmp1 = Ptr.arayElem(ndigit, tmp0);
+            inc(tmp1);
+            seti(Ptr.arayElem(ndigit, tmp0), tmp1);
+        }
+        or(eq(c, 10), or(eq(c, 9), eq(c, 32))) => {inc(nwhite);}
+        default => {inc(nother);}
+    }
+    goto(while);
+    whileEnd = label();
+}

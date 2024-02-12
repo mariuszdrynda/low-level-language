@@ -1,0 +1,119 @@
+use std::str::FromStr;
+// use lalrpop_util::ErrorRecovery;
+use crate::ast::{AST, Ty};
+
+//grammar<'err>(errors: &'err mut Vec<ErrorRecovery<usize, Token<'input>, &'static str>>);
+grammar;
+
+pub Top: Vec<Box<AST>> = {
+    Global+ => <>,
+} 
+
+Global: Box<AST> = {
+    Function,
+    GlobalAssignment,
+}
+
+GlobalAssignment: Box<AST> = <n:Name> "=" <l:RightGlobalAssignment> ";" => Box::new(AST::Assignment(n, l));
+
+RightGlobalAssignment: Box<AST> = {
+    Argument,
+    Struct,
+    Union,
+};
+
+Struct: Box<AST> = "struct" "{" <a:Arguments<AgrumentWithType>?> "}" => {
+    match a {
+        None => Box::new(AST::Struct(Vec::new())),
+        Some(i) => Box::new(AST::Struct(i)),
+    }
+};
+
+Union: Box<AST> = "union" "{" <a:Arguments<AgrumentWithType>?> "}" => {
+    match a {
+        None => Box::new(AST::Union(Vec::new())),
+        Some(i) => Box::new(AST::Union(i)),
+    }
+};
+
+Function: Box<AST> = "fn" <n:Name> "(" <a:Arguments<AgrumentWithType>?> ")" "-" ">" <r:Type> "{" <s:Statements> "}" => {
+    match a {
+        Some(o) => Box::new(AST::Function(n, o, r, s)),
+        None => Box::new(AST::Function(n, Vec::new(), r, s))
+    }
+};    
+
+AgrumentWithType: Box<AST> = <n:Name> ":" <t:Type> => Box::new(AST::NameWithType(n, t));
+
+Statements: Vec<Box<AST>> = Statement+ => <>;
+
+Statement: Box<AST> = {
+    <ass:Assignment> ";" => ass,
+    <f:Function_call> ";" => f,
+    "match" <a:Arguments<Argument>> "{" <c:Case_body> "}" => Box::new(AST::Match(a, c)),
+};
+
+Assignment: Box<AST> = <n:Name> "=" <a:Argument> => Box::new(AST::Assignment(n, a));
+
+Case_body: Vec<Box<AST>> = Case+ => <>;
+
+Case: Box<AST> = {
+    <a:Argument> "=" ">" "{" <s:Statements> "}" => Box::new(AST::Case(a, s)),
+};
+
+Function_call: Box<AST> = <n:Name> "(" <a:Arguments<Argument>?> ")" => {
+    match a {
+        None => Box::new(AST::FunctionCall(n, Vec::new())),
+        Some(i) => Box::new(AST::FunctionCall(n, i)),
+    }
+};
+
+Arguments<T>: Vec<Box<AST>> = <v:(<T> ",")*> <e:T> => {
+    let mut v = v;
+    v.push(e);
+    v
+};
+
+Argument: Box<AST> = {
+    "true" => Box::new(AST::Boolean(true)),
+    "false" => Box::new(AST::Boolean(false)),
+    Name => Box::new(AST::Name(<>)),
+    Int => Box::new(AST::Int(<>)),
+    Function_call => <>,
+    Float => Box::new(AST::Float(<>)),
+    Char => Box::new(AST::Char(<>)),
+    Str => Box::new(AST::Str(<>)),
+};
+
+Int: i64 = r"[0-9]+" => i64::from_str(<>).unwrap();
+
+Name: String = <i:r"[_a-zA-Z][_a-zA-Z0-9'.']*"> => i.to_string();
+
+Float: f64 = r"[0-9]+.[0-9]+" => f64::from_str(<>).unwrap();
+
+Char: char = r"'.'" => '\0'; //todo
+
+Str: String = <i:r#"".*""#> => i.to_string();
+
+Type: Ty = {
+    <n:Name> => Ty::Name(n),
+}
+
+match {
+    r"#[^\n\r]*[\n\r]*" => { },
+    r"[ \n\t]" => {},
+    // "true",
+    // "false",
+    // "(",
+    // ")",
+    // r"''",
+    r"[0-9]+.[0-9]+",
+    // r"[_a-zA-Z][_a-zA-Z0-9'.']*",
+    // r"[_a-zA-Z][_a-zA-Z0-9]+", //+-*/&^%!#$.,?
+    // r"\s*" => { },
+    // r"//[^\n\r]*[\n\r]*" => { },
+    // r"/\*([^\*]*\*+[^\*/])*([^\*]*\*+|[^\*])*\*/" => { },
+} else {
+    r"[0-9]+",
+    _
+}

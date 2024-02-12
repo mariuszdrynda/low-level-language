@@ -1,0 +1,187 @@
+c.assert.assert()
+c.Double.add()
+c.errno.EDOM
+c.errno.EILSEQ
+c.errno.ERANGE
+c.errno.errno # thread-local error number variable
+c.fenv.feclearexcept(Int) -> Int \ state https://en.wikibooks.org/wiki/C_Programming/fenv.h
+c.fenv.fetestexcept(Int) -> Int \ state
+c.fenv.feraiseexcept(Int) -> Int
+c.fenv.fegetexceptflag
+c.fenv.fesetexceptflag
+c.fenv.fegetround
+c.fenv.fesetround
+c.fenv.fegetenv
+c.fenv.fesetenv
+c.fenv.feholdexcept
+c.fenv.feupdateenv
+c.Float.add()
+c.locale.LC_ALL #	selects the entire C locale
+c.locale.LC_COLLATE #	selects the collation category of the C locale
+c.locale.LC_CTYPE #	selects the character classification category of the C locale
+c.locale.LC_MONETARY #	selects the monetary formatting category of the C locale
+c.locale.LC_NUMERIC #	selects the numeric formatting category of the C locale
+c.locale.LC_TIME #	selects the time formatting category of the C locale 
+c.locale.lconv
+c.locale.localeconv
+c.locale.setlocale() \ state
+c.netdb # todo
+c.netinet.in # todo
+c.setjmp.jmp_buf
+c.setjmp.longjmp
+c.setjmp.setjmp() # https://en.wikipedia.org/wiki/Setjmp.h
+c.signal.raise()
+c.signal.sig_atomic_t
+c.signal.SIG_DFL
+c.signal.SIG_ERR
+c.signal.SIG_IGN
+c.signal.SIGABRT #	abnormal termination condition, as is e.g. initiated by abort()
+c.signal.SIGFPE #	erroneous arithmetic operation such as divide by zero 
+c.signal.SIGILL #	invalid program image, such as invalid instruction
+c.signal.SIGINT #	external interrupt, usually initiated by the user
+c.signal.signal()
+c.signal.SIGSEGV #	invalid memory access (segmentation fault)
+c.signal.SIGTERM #	termination request, sent to the program
+c.size_t
+c.stdatomic
+c.stdbit
+c.stddef.max_align_t
+c.stddef.nullptr_t
+c.stddef.offsetof
+c.stddef.ptrdiff_t
+c.stddef.unreachable
+c.stdio.clearerr(mutable Ptr.FILE) -> Unit
+c.stdio.ferror(FILE) -> Int # checks the error
+c.stdio.fgetc(mutable Ptr.FILE) -> Int
+c.stdio.FILE # https://en.cppreference.com/w/c/io/FILE
+c.stdio.fopen(FILE)
+c.stdio.fread(Prt, Size, Size, FILE)
+c.stdio.getc(mutable Ptr.FILE) -> Int
+c.stdio.getchar() \ eof, error # equivalent to getc(stdin)
+c.stdio.perror
+c.stdio.snprintf() # https://cplusplus.com/reference/cstdio/snprintf/
+c.stdlib._Exit
+c.stdlib.abort()
+c.stdlib.at_quick_exit
+c.stdlib.atexit
+c.stdlib.calloc(Unsigned, Unsigned) -> Ptr \ oom, mem # out of memory
+c.stdlib.exit()
+c.stdlib.EXIT_FAILURE
+c.stdlib.EXIT_SUCCESS
+c.stdlib.free(Ptr) \ mem
+c.stdlib.getenv
+c.stdlib.getenv_s
+c.stdlib.malloc(Unsigned) -> Ptr \ oom, mem # oom - possibility of null
+c.stdlib.memalignment # determine the byte alignment of a pointer
+c.stdlib.quick_exit
+c.stdlib.rand
+c.stdlib.realloc(Ptr, Unsigned) -> Ptr \ oom, mem
+c.stdlib.system() \ os
+c.string.memccpy # efficiently concatenate strings - similar to POSIX and SVID C extensions
+c.string.memset_explici t# erase sensitive data, where memory store must always be performed regardless of optimizations
+c.string.strcpy(dest: restrict Array<Char, m>, src: const restrict Array<Char, n>) -> Char \ oob if le(m, n) # The behavior is undefined if the strings overlap. The behavior is undefined if either dest is not a pointer to a character array or src is not a pointer to a null-terminated byte string.
+c.string.strcpy_s(dest: restrict Array<Char, m>, destsz: rsize_t, src: const restrict Array<Char, n>) -> errno_t \ oob if le(m, n)
+c.string.strdup # allocate a copy of a string – similar to POSIX and SVID C extensions
+c.string.strerror(Int) -> Ptr.Char
+c.string.strerror_s(Ptr.Char, rsize_t, errno_t) -> errno_t
+c.string.strerrorlen_s(errno_t) -> size_t
+c.string.strndup
+c.sys.socket # https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html
+c.sys.types
+c.tgmath https://en.wikibooks.org/wiki/C_Programming/tgmath.h
+c.threads
+c.time https://en.wikibooks.org/wiki/C_Programming/time.h
+compiler.architecture() # sets output architecture file
+    ELF_x64_LINUX
+    WINDOWS_x64
+    STANDALONE_x86
+compiler.attribut # https://en.cppreference.com/w/c/language/attributes
+compiler.attribut.noreturn https://en.cppreference.com/w/c/language/attributes/noreturn
+compiler.comptime # fn executed during comptime
+compiler.generic https://en.cppreference.com/w/c/language/generic
+compiler.inline
+compiler.register # You get better code if the compiler does the work of allocating registers for individual uses of a variable, rather than reserving them for its entire lifetime at declaration.
+compiler.restrict # https://en.wikipedia.org/wiki/Restrict
+compiler.volatile  # https://en.wikipedia.org/wiki/Volatile_(computer_programming)
+flow.break()
+flow.goto(Label) \ loop, inf # jeśli skaczemy w tył
+flow.label() -> Label
+flow.nop()
+flow.unreachable() \ panic
+I8.add()
+I16.add()
+I32.add()
+I64.add(I64, I64) -> I64 \ of
+I64.and(I64, I64) -> I64
+I64.div(I64, I64) -> I64 \ of, db0 # SLLL: (a:I64, b:I64) I64.neq(b, 0) -> I64 / of
+I64.eq(I64, I64) -> Bool
+I64.gr(I64, I64) -> Bool
+I64.geq(I64, I64) -> Bool
+I64.fromI32(I32) -> I64 # C conversion
+I64.le(I64, I64) -> Bool
+I64.leq(I64, I64) -> Bool
+I64.lsf(I64, I64) -> I64
+I64.mod(I64, I64) -> I64 \ of
+I64.mul(I64, I64) -> I64 \ of
+I64.neq(I64, I64) -> Bool
+I64.not(I64) -> I64
+I64.or(I64, I64) -> I64
+I64.rsf(I64, I64) -> I64
+I64.sub(I64, I64) -> I64 \ uf
+Ptr.add(Ptr, TypeSize) -> Ptr \ mo # Ptr.add(array, Ptr.mul(3, Int)) przeuń o 3 elem w tablicy intów
+Ptr.arrayElem(array: Array<a, n>, index: Size) -> a \ oob if geq(index, n)
+Ptr.cast(0 Type, Ptr) -> Ptr.Type
+Ptr.deref(Ptr) -> Any \ oob # loadi
+Ptr.deref(Ptr.Ptr) -> Any \ null # possible null
+Ptr.mul(Int, Type) -> Ptr
+Ptr.null() -> Ptr # returns NULL
+Ptr.sub(Ptr, Ptr) -> Ptr
+SChar
+sideEffect.db0
+sideEffect.eof
+sideEffect.error
+sideEffect.inf
+sideEffect.loop
+sideEffect.mem
+sideEffect.mo # nie pamiętam co to miało znaczyć
+sideEffect.null
+sideEffect.oob
+sideEffect.oom
+sideEffect.of # overflow
+sideEffect.os
+sideEffect.state
+sideEffect.uf # underflow
+sizeof(Any) -> TypeSize # todo sizeof Type and sizeof record
+U16.add() \ of
+U32.add() \ of
+U64.add() \ of
+U128.add() \ of
+UChar
+Unit
+
+# TODO
+https://chromium.googlesource.com/chromiumos/docs/+/HEAD/constants/syscalls.md
+https://en.cppreference.com/w/c/chrono
+https://en.cppreference.com/w/c/numeric/tgmath
+https://en.cppreference.com/w/c/numeric/math
+https://en.cppreference.com/w/c/thread
+https://en.cppreference.com/w/c/variadic
+https://en.cppreference.com/w/c/types/integer
+https://en.cppreference.com/w/c/types/limits
+https://en.cppreference.com/w/c/io
+https://en.cppreference.com/w/c/string/byte
+https://en.cppreference.com/w/c/string/multibyte
+https://en.cppreference.com/w/c/string/wide
+https://en.wikipedia.org/wiki/Uncontrolled_format_string
+https://ziglang.org/documentation/master/#Undefined-Behavior
+gets_s, fopen_s, printf_s, wcscpy_s, mbstowcs_s, qsort_s, getenv_s
+errno_t
+rsize_t
+RSIZE_MAX
+set_constraint_handler_s
+abort_handler_s
+ignore_handler_s
+
+#ignored
+c.complex # https://en.cppreference.com/w/c/numeric/complex
+c.ctype # https://en.cppreference.com/w/c/string/byte

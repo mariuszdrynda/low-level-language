@@ -1,5 +1,8 @@
-printf = import(stdio.printf)
-main = fn(){
-    io = printf("Hello World!\n")
-    return = 0
+fn main()-> Unit{
+    drop = c.stdio.printf("Hello World!\n");
+    match c.stdio.getchar() {
+        EOF => {flow.nop();}
+        default => {flow.nop();}
+    }
+    return(0);
 }

@@ -1,5 +1,1 @@
-/examples/todo.lll
-/ply/__pycache__
-/ply/parser.out
-/ply/parsetab.py
-/rust/target
+/source/target

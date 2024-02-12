@@ -1,0 +1,8 @@
+fn add(a: Int, b: Int) -> Float {
+    add_Int(a, b);
+    # return should be here
+}
+fn main()->Int {
+    add(5, 6);
+    return(0);
+}

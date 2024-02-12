@@ -1,0 +1,8 @@
+fn add_5(a: Int)->Int{
+    return(add(a, 5));
+}
+fn main()->Int{
+    func = add_5;
+    result = func(3);
+    return(0);
+}
