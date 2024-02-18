@@ -14,3 +14,14 @@ Second, and more impotant, is to study different possibilities of optimization a
 + No hidden control flow (a program does only what we intended and nothing more)
 
 This rules could change as language will evolve.
+
+# Language description
+
+## Hello World
+
+```
+fn main()-> Unit{
+    drop = c.stdio.printf("Hello World!\n");
+    return(0);
+}
+```
