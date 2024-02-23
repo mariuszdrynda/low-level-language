@@ -9,8 +9,9 @@ Second, and more impotant, is to study different possibilities of optimization a
 
 # Principal rules
 
-+ Only one file as code input
++ Only one file as code input (one translation unit)
 + No infix operators (only functions)
++ All functions are global
 + No hidden control flow (a program does only what we intended and nothing more)
 
 This rules could change as language will evolve.
@@ -43,7 +44,28 @@ Function "main" is a startpoint of the program.
 
 ### Pointers
 
+Pointers are simply integers sufficiently wide to represent all memory addresses.
+
+```
+// C
+int a = 5;
+int* b = &a;
+*b = 7;
+
+# LLL
+a = I64(5);
+b = addr(a); #:Ptr<I64>
+Ptr.set(b, 7);
+```
+
 ## Types
+
+Types are nothing more than information what is the minimum size of the variable.
+
+```
+boolean: 1 = True;
+pointer: 64 = Ptr.deref(boolean)
+```
 
 ### Build-in types
 
@@ -57,6 +79,8 @@ Match is an expression.
 
 ### Jumps
 
+Jumps works only within the same function.
+
 ### Return
 
 Function return accepts only one argument which has to be the same type as the one declared 
@@ -65,9 +89,13 @@ Function return accepts only one argument which has to be the same type as the o
 
 ## Global variables
 
+Every global variable needs to be initialized. All global variables are availble all the time from any place in code.
+
 ## Functions
 
 Everything in passed to function by value (copyied). If you want to move by reference you have to explicitly pass pointer.
+
+Functions can not be nested.
 
 ### Command line arguments
 
@@ -75,15 +103,46 @@ Everything in passed to function by value (copyied). If you want to move by refe
 
 Function pointers are treated like any other pointer.
 
+```
+fn add_5(a: Int)->Int{
+    Flow.return(add(a, 5));
+}
+fn main()->Int{
+    func = add_5;
+    result: Int = func(3); # it's user 
+    Flow.return(0);
+}
+```
+
 ## Structs and unions
 
 ## STD
 
+STD is divided into two main parts: build-ins and platform-dependent API. Build-in are available on all supported architectures (also for standalone programs).
+
 ### List of build-in functions
+
+List of all build-in functions. In this section we're going to use following convenction:
+```
+function_name(arg1:ParametrizedType(Param1, Param2), arg2:Type) ReturnedType \ possible_side_effect
+```
+
++ Flow.goto(Label) \ infinite_loop # if we jumping backwards
++ Flow.label() -> Label
++ Flow.nop()
++ Flow.return(Any) 
++ Flow.unreachable() \ panic
++ Ptr.set(a:Ptr(A), b:A) Unit \ nullptr_deref # if(eq(a, 0))
+
+### List of build-in types
+
++ Unit # type with only one possible value. Used when function doesn't return any value. Similar to C's void
 
 ## Platform-depended API
 
-### Linux
+Every supported architecture could have set of functions and variables available only on this specific architecture, for example sys calls.
+
+### Linux_x64
 
 ## Compiler options
 
@@ -92,7 +151,11 @@ There are needed for building platform-independent code/libraries.
 
 # Effects
 
-TLDR: takes program as an input and tells you where it can fail
+TLDR: takes program as an input and tells you where it can fail.
+List of effects:
++ infinite_loop
++ nullptr_deref
++ panic
 
 # Supported backends
 
@@ -101,6 +164,8 @@ LLL is designed as a backend language. When it's finished it will generate execu
 # What and why this language doesn't support?
 
 List of not supported features:
+- function declaration
+- enum
 - exceptions, try-catch blocks
 - const
 - tuples
