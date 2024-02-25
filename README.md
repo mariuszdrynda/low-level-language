@@ -45,7 +45,6 @@ Function "main" is a startpoint of the program.
 ### Pointers
 
 Pointers are simply integers sufficiently wide to represent all memory addresses.
-
 ```
 // C
 int a = 5;
@@ -57,6 +56,7 @@ a = I64(5);
 b = addr(a); #:Ptr<I64>
 Ptr.set(b, 7);
 ```
+Null pointer (equal to 0) is a perfectly valid pointer value. Behaviour of dereferencing it is platform-specific (although I don't know the example where it can be usefull and it doesn't result in something unwanted).
 
 ## Types
 
@@ -164,6 +164,7 @@ LLL is designed as a backend language. When it's finished it will generate execu
 # What and why this language doesn't support?
 
 List of not supported features:
+- casting
 - function declaration
 - enum
 - exceptions, try-catch blocks
@@ -175,10 +176,11 @@ List of not supported features:
 - tests, assertions
 - loops: for, while, do..while, break, continue
 - if..else
-- casting
 - preprocessor
 - variadic functions
-- std: io, files, threads, networking, containers
+- std: io, files, threads, networking, containers, ...
+- garbage collector
+- classes and OOP stuff: inheritance, polymorphism, ...
 
 ### Casting
 
