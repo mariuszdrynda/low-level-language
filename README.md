@@ -58,6 +58,17 @@ Ptr.set(b, 7);
 ```
 Null pointer (equal to 0) is a perfectly valid pointer value. Behaviour of dereferencing it is platform-specific (although I don't know the example where it can be usefull and it doesn't result in something unwanted).
 
+### Arrays
+
+Arrays index start at 0.
+
+```
+array = Array(Int, 10); # 10-element array of ints, array is a pointer to the first element
+Ptr.array_elem(array, 0); # read the first element
+```
+
+Multidimensional array are nothing more than array of arrays.
+
 ## Types
 
 Types are nothing more than information what is the minimum size of the variable.
@@ -127,11 +138,13 @@ List of all build-in functions. In this section we're going to use following con
 function_name(arg1:ParametrizedType(Param1, Param2), arg2:Type) ReturnedType \ possible_side_effect
 ```
 
++ Array
 + Flow.goto(Label) \ infinite_loop # if we jumping backwards
 + Flow.label() -> Label
 + Flow.nop()
 + Flow.return(Any) 
 + Flow.unreachable() \ panic
++ Ptr.array_elem(ptr, n) \ oob
 + Ptr.set(a:Ptr(A), b:A) Unit \ nullptr_deref # if(eq(a, 0))
 
 ### List of build-in types
