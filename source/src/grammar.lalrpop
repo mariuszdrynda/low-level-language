@@ -17,7 +17,7 @@ Global: Box<AST> = {
 GlobalAssignment: Box<AST> = <n:Name> "=" <l:RightGlobalAssignment> ";" => Box::new(AST::Assignment(n, l));
 
 RightGlobalAssignment: Box<AST> = {
-    Argument,
+    Literal,
     Struct,
     Union,
 };
@@ -50,8 +50,10 @@ Statements: Vec<Box<AST>> = Statement+ => <>;
 Statement: Box<AST> = {
     <ass:Assignment> ";" => ass,
     <f:Function_call> ";" => f,
-    "match" <a:Arguments<Argument>> "{" <c:Case_body> "}" => Box::new(AST::Match(a, c)),
+    <m:Match> => m,
 };
+
+Match: Box<AST> = "match" <a:Arguments<Argument>> "{" <c:Case_body> "}" => Box::new(AST::Match(a, c));
 
 Assignment: Box<AST> = <n:Name> "=" <a:Argument> => Box::new(AST::Assignment(n, a));
 
@@ -75,11 +77,16 @@ Arguments<T>: Vec<Box<AST>> = <v:(<T> ",")*> <e:T> => {
 };
 
 Argument: Box<AST> = {
+    Function_call => <>,
+    <l:Literal> => l,
+    <m:Match> => m,
+};
+
+Literal: Box<AST> = {
     "true" => Box::new(AST::Boolean(true)),
     "false" => Box::new(AST::Boolean(false)),
     Name => Box::new(AST::Name(<>)),
     Int => Box::new(AST::Int(<>)),
-    Function_call => <>,
     Float => Box::new(AST::Float(<>)),
     Char => Box::new(AST::Char(<>)),
     Str => Box::new(AST::Str(<>)),
