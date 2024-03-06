@@ -4,5 +4,6 @@ int add_5(int a){
 int main(){
     int (*func)(int) = add_5;
     int result = func(3);
-    return(0);
+    printf("%d", result);
+    return 0;
 }

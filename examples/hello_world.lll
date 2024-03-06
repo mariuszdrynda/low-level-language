@@ -1,8 +1,5 @@
 fn main()-> Unit{
-    drop = c.stdio.printf("Hello World!\n");
-    match c.stdio.getchar() {
-        EOF => {flow.nop();}
-        default => {flow.nop();}
-    }
+    c.stdio.printf("Hello World!\n");
+    c.stdio.getchar();
     return(0);
 }

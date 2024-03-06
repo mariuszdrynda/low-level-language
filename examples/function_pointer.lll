@@ -4,5 +4,6 @@ fn add_5(a: Int)->Int{
 fn main()->Int{
     func = add_5;
     result = func(3);
+    c.stdio.printf("%d", result);
     return(0);
 }
