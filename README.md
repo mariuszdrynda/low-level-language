@@ -44,7 +44,7 @@ Function "main" is a startpoint of the program.
 
 ### Pointers
 
-Pointers are simply integers sufficiently wide to represent all memory addresses.
+Pointers are simply integers sufficiently wide to represent all memory addresses. Pointers remembers type of variable they're pointing to, but this information is available only in compile time.
 ```
 // C
 int a = 5;
@@ -53,7 +53,7 @@ int* b = &a;
 
 # LLL
 a = I64(5);
-b = addr(a); #:Ptr<I64>
+b = Ptr.addr(a); #:Ptr(I64)
 Ptr.set(b, 7);
 ```
 Null pointer (equal to 0) is a perfectly valid pointer value. Behaviour of dereferencing it is platform-specific (although I don't know the example where it can be usefull and it doesn't result in something unwanted).
@@ -61,18 +61,15 @@ Null pointer (equal to 0) is a perfectly valid pointer value. Behaviour of deref
 ### Arrays
 
 Arrays index start at 0.
-
 ```
 array = Array(Int, 10); # 10-element array of ints, array is a pointer to the first element
 Ptr.array_elem(array, 0); # read the first element
 ```
-
 Multidimensional array are nothing more than array of arrays.
 
 ## Types
 
 Types are nothing more than information what is the minimum size of the variable.
-
 ```
 boolean: 1 = True;
 pointer: 64 = Ptr.deref(boolean)
@@ -84,7 +81,26 @@ pointer: 64 = Ptr.deref(boolean)
 
 ## Match
 
-Match is an expression.
+Match is build with argument and list of possible cases. Values from the left side of an arrow from list of cases are compared with match argument from the top until 
+```
+x = some_computations();
+match x { # 'x' is an match argument
+    0 => {} # first case
+    1 => {} # second case
+    2 => {}
+}
+```
+Match is an expression, it can return a value. Types of values returned from all of the cases has to be the same.
+```
+//C
+int x = 5, y = 6;
+int z = x > y ? x : y;
+
+# LLL
+x = Int(5);
+y = Int(6);
+z = match gr(x, y) {true => {x} false => {y}}
+```
 
 ## Flow
 
@@ -100,32 +116,73 @@ Function return accepts only one argument which has to be the same type as the o
 
 ## Global variables
 
-Every global variable needs to be initialized. All global variables are availble all the time from any place in code.
+Every global variable needs to be initialized (setting to undefined is also ok). All global variables are availble all the time from any place in code.
 
 ## Functions
 
-Everything in passed to function by value (copyied). If you want to move by reference you have to explicitly pass pointer.
-
-Functions can not be nested.
+Everything in passed to function by value (copyied). If you want to move by reference you have to explicitly pass pointer. Functions can not be nested.
 
 ### Command line arguments
 
 ### Function pointers
 
-Function pointers are treated like any other pointer.
-
+Function pointers are treated like any other pointers.
 ```
 fn add_5(a: Int)->Int{
     Flow.return(add(a, 5));
 }
 fn main()->Int{
     func = add_5;
-    result: Int = func(3); # it's user 
+    result: Int = func(3);
     Flow.return(0);
 }
 ```
 
 ## Structs and unions
+
+Structs are collection of variables.
+```
+Point = struct{x: Int, y: Int}
+Circle = struct{}
+```
+
+Structs can contain arrays.
+```
+//C
+typedef struct{
+    int a;
+    int b;
+} Hehe;
+int main(){
+    Hehe arr[5];
+    arr[3].b = 12;
+}
+
+# LLL
+Hehe = struct{a : I32, b : I32};
+fn main(){
+	arr = Array(5, Hehe);
+	Ptr.setElem(Ptr.getElem(arr, 3), Hehe.b, 12);
+}
+```
+And arrays can contain structs.
+```
+//C
+typedef struct{
+    int arr[3];
+} Hehe;
+int main(){
+    Hehe arr[5];
+    arr[3].arr[2] = 12;
+}
+
+# LLL
+Hehe = struct{arr : ArrayType(3, I32)}
+int main(){
+	arr = Array(5, Hehe);
+	Ptr.setElem(Ptr.getElem(Ptr.getElem(arr, 3), Hehe.arr), 2, 12)
+}
+```
 
 ## STD
 
@@ -138,17 +195,25 @@ List of all build-in functions. In this section we're going to use following con
 function_name(arg1:ParametrizedType(Param1, Param2), arg2:Type) ReturnedType \ possible_side_effect
 ```
 
-+ Array
++ Array(Type, Size)
 + Flow.goto(Label) \ infinite_loop # if we jumping backwards
 + Flow.label() -> Label
 + Flow.nop()
 + Flow.return(Any) 
 + Flow.unreachable() \ panic
-+ Ptr.array_elem(ptr, n) \ oob
++ Ptr.addr(Any)
++ Ptr.array_elem(Ptr, Size) \ oob
++ Ptr.getElem(Ptr, Offset) Ptr \ oob, nullptr_deref
 + Ptr.set(a:Ptr(A), b:A) Unit \ nullptr_deref # if(eq(a, 0))
++ Ptr.setElem(Ptr(A), Offset, A) Unit \ oob, nullptr_deref
 
 ### List of build-in types
 
++ I32 # 32-bit integer
++ Int # c-like int type
++ Offset
++ Ptr # pointer, integer with type it's pointing to
++ Size # unsigned integer
 + Unit # type with only one possible value. Used when function doesn't return any value. Similar to C's void
 
 ## Platform-depended API
@@ -168,6 +233,7 @@ TLDR: takes program as an input and tells you where it can fail.
 List of effects:
 + infinite_loop
 + nullptr_deref
++ oob
 + panic
 
 # Supported backends
