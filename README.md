@@ -1,5 +1,5 @@
 # low-level-language
-Low Level Language is an intermediate representation for C programming language
+Low Level Language is an intermediate representation for higher level languages.
 
 # Goal
 
@@ -20,11 +20,13 @@ This rules could change as language will evolve.
 
 # Language description
 
+Every program is composed of global values (functions, structs, unions and global variables). 
+
 ## Hello World
 
 ```
 fn main() -> Int{
-    drop = c.stdio.printf("Hello World!\n");
+    c.stdio.printf("Hello World!\n");
     return(0);
 }
 ```
@@ -34,13 +36,19 @@ Function "main" is a startpoint of the program.
 
 ### Booleans
 
+There are two possible boolean values: true and false;
+
 ### Integers
 
 ### Floats
 
+Floating-point numbers are represented using the single-precision and double-precision formats of the IEEE 754 standard.
+
 ### Chars
 
 ### Strings
+
+String is an array of characters.
 
 ### Pointers
 
@@ -69,25 +77,32 @@ Multidimensional array are nothing more than array of arrays.
 
 ## Types
 
-Types are nothing more than information what is the minimum size of the variable.
+Types are nothing more than information what is the minimum size of the variable in bits.
 ```
 boolean: 1 = True;
 pointer: 64 = Ptr.deref(boolean)
 ```
 
-### Build-in types
-
 ### Undefined
+
+Every l-value variable has to be initialized. If we don't care for starting value we can use undefined value. Using undefined value in expression has undefined behaviour.
+```
+x: I32 = undefined;
+```
 
 ## Match
 
-Match is build with argument and list of possible cases. Values from the left side of an arrow from list of cases are compared with match argument from the top until 
+Match is build with argument and list of possible cases. Values from the left side of an arrow from list of cases are compared with match argument from the top until two compared values are equal. Match arument and all of the values from the left side of an arrow has to have the same type (but only integers, chars and booleans are allowed).
+
+Flow.default will always match the argument.
 ```
 x = some_computations();
 match x { # 'x' is an match argument
     0 => {} # first case
     1 => {} # second case
     2 => {}
+    Flow.default => { Flow.nop; }
+    3 => { Flow.unreachable; }
 }
 ```
 Match is an expression, it can return a value. Types of values returned from all of the cases has to be the same.
@@ -113,6 +128,8 @@ Jumps works only within the same function.
 Function return accepts only one argument which has to be the same type as the one declared 
 
 ### Drop
+
+When function returns some value which we don't need we can drop it by assigning to a drop build-in value.
 
 ## Global variables
 
@@ -198,14 +215,16 @@ function_name(arg1:ParametrizedType(Param1, Param2), arg2:Type) ReturnedType \ p
 + Array(Type, Size)
 + Flow.goto(Label) \ infinite_loop # if we jumping backwards
 + Flow.label() -> Label
-+ Flow.nop()
 + Flow.return(Any) 
-+ Flow.unreachable() \ panic
 + Ptr.addr(Any)
 + Ptr.array_elem(Ptr, Size) \ oob
 + Ptr.getElem(Ptr, Offset) Ptr \ oob, nullptr_deref
 + Ptr.set(a:Ptr(A), b:A) Unit \ nullptr_deref # if(eq(a, 0))
 + Ptr.setElem(Ptr(A), Offset, A) Unit \ oob, nullptr_deref
+
+### C ABI
+
++ c.stdio.printf() \ io
 
 ### List of build-in types
 
@@ -215,6 +234,15 @@ function_name(arg1:ParametrizedType(Param1, Param2), arg2:Type) ReturnedType \ p
 + Ptr # pointer, integer with type it's pointing to
 + Size # unsigned integer
 + Unit # type with only one possible value. Used when function doesn't return any value. Similar to C's void
+
+### List of build-in values
+
++ drop
++ Flow.default
++ Flow.nop
++ Flow.unreachable \ panic
++ Ptr.null
++ undefined
 
 ## Platform-depended API
 
@@ -235,6 +263,7 @@ List of effects:
 + nullptr_deref
 + oob
 + panic
++ undefined_val
 
 # Supported backends
 
@@ -277,3 +306,31 @@ int main(){
 }
 ```
 For LLL only matters that argument we're passing to "add" function has 32 bits and "add" function accepts 32 bits arguments as well (doesn't matter it's not the same type).
+
+# Syntax
+
+```
+Top = Global+
+Global = Function | GlobalAssignment
+GlobalAssignment = Name "=" RightGlobalAssignment ";"
+RightGlobalAssignment = Literal | Struct | Union
+Struct = "struct" "{" ArgumentsWithType? "}"
+Union = "union" "{" ArgumentsWithType? "}" 
+Function = "fn" Name "(" ArgumentsWithType? ")" "-" ">" Type "{" Statement+ "}"
+Statement = Assignment ";" | FunctionCall ";" | Match
+Match = "match" Arguments "{" Case+ "}"
+Assignment = Name "=" Argument
+Case = Argument "=" ">" "{" Statement+ "}"
+Functioncall = Name "(" Arguments? ")"
+ArgumentsWithType = (AgrumentWithType ",")* AgrumentWithType
+AgrumentWithType = Name ":" Type
+Arguments = (Argument ",")* Argument
+Argument = FunctionCall | Match | Literal
+Literal = "true" | "false" | Name | Int | Float | Char | Str
+Type = Name
+Int = "[0-9]+"
+Name = "[_a-zA-Z][_a-zA-Z0-9'.']*"
+Float = "[0-9]+.[0-9]+"
+Char
+Str
+```
