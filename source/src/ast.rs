@@ -1,5 +1,6 @@
 use std::fmt;
 
+#[derive(Clone)]
 pub enum AST {
     Int(i64),
     Name(String),
@@ -50,7 +51,31 @@ impl PartialEq for Ty {
     }
 }
 
-pub fn display_Vec_AST(ast: &Vec<Box<AST>>, i: usize) -> () {
+impl PartialEq for AST {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (AST::Int(n), AST::Int(m)) => n == m,
+            (AST::Name(n), AST::Name(m)) => n == m,
+            (AST::NameWithType(s, n), AST::NameWithType(z, m)) => n == m && z == s,
+            (AST::FunctionCall(s, n), AST::FunctionCall(z, m)) => n == m && z == s,
+            (AST::Float(n), AST::Float(m)) => n == m,
+            (AST::Char(n), AST::Char(m)) => n == m,
+            (AST::Str(n), AST::Str(m)) => n == m,
+            (AST::Boolean(n), AST::Boolean(m)) => n == m,
+            (AST::Case(n, c0), AST::Case(m, c1)) => n == m && c0 == c1,
+            (AST::Match(n, lc0), AST::Match(m, lc1)) => n == m && lc0 == lc1,
+            (AST::Function(n, a0, t0, b0), AST::Function(m, a1, t1, b1)) => {
+                n == m && a0 == a1 && t0 == t1 && b0 == b1
+            }
+            (AST::Assignment(s0, n), AST::Assignment(s1, m)) => n == m && s0 == s1,
+            (AST::Struct(n), AST::Struct(m)) => n == m,
+            (AST::Union(n), AST::Union(m)) => n == m,
+            _ => false,
+        }
+    }
+}
+
+pub fn display_vec_ast(ast: &Vec<Box<AST>>, i: usize) -> () {
     // for _ in 0..i {
     //     print!("\t");
     // }
@@ -97,7 +122,7 @@ fn display_AST(ast: &AST, i: usize) -> () {
         }
         AST::Function(name, a, t, stm) => {
             print!("(FUNCTION {:?}\n", name);
-            display_Vec_AST(stm, i + 1);
+            display_vec_ast(stm, i + 1);
             for _ in 0..i {
                 print!("\t");
             }
@@ -111,10 +136,10 @@ fn display_AST(ast: &AST, i: usize) -> () {
             print!(")\n");
         }
         AST::Struct(s) => {
-            display_Vec_AST(&s, i + 1);
+            display_vec_ast(&s, i + 1);
         }
         AST::Union(u) => {
-            display_Vec_AST(&u, i + 1);
+            display_vec_ast(&u, i + 1);
         }
     }
 }

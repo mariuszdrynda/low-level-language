@@ -355,7 +355,7 @@ fn allFunctionNamesInAST(
         match leaf.as_ref() {
             AST::Function(name, _, t, stm) => {
                 let mut listOfAllNames: Vec<(String, bool)> = vec![];
-                loafn.push((name.to_string(), allNamesInAST(&stm, listOfAllNames)));
+                loafn.push((name.to_string(), all_names_in_ast(&stm, listOfAllNames)));
             }
             _ => {}
         }
@@ -363,7 +363,7 @@ fn allFunctionNamesInAST(
     loafn
 }
 
-fn allNamesInAST(ast: &Vec<Box<AST>>, mut loan: Vec<(String, bool)>) -> Vec<(String, bool)> {
+fn all_names_in_ast(ast: &Vec<Box<AST>>, mut loan: Vec<(String, bool)>) -> Vec<(String, bool)> {
     for leaf in ast {
         loan = allNamesInASTBox(leaf, loan);
     }
@@ -380,29 +380,29 @@ fn allNamesInASTBox(ast: &Box<AST>, mut loan: Vec<(String, bool)>) -> Vec<(Strin
         }
         AST::FunctionCall(s, v) => {
             loan.push((s.to_string(), false));
-            loan = allNamesInAST(&v, loan);
+            loan = all_names_in_ast(&v, loan);
         }
         AST::Case(arg, stm) => {
             loan = allNamesInASTBox(&arg, loan);
-            loan = allNamesInAST(&stm, loan);
+            loan = all_names_in_ast(&stm, loan);
         }
         AST::Match(arg, case) => {
-            loan = allNamesInAST(&arg, loan);
-            loan = allNamesInAST(&case, loan);
+            loan = all_names_in_ast(&arg, loan);
+            loan = all_names_in_ast(&case, loan);
         }
         AST::Function(name, _, _, stm) => {
             loan.push((name.to_string(), false));
-            loan = allNamesInAST(&stm, loan);
+            loan = all_names_in_ast(&stm, loan);
         }
         AST::Assignment(name, fc) => {
             loan.push((name.to_string(), false));
             loan = allNamesInASTBox(&fc, loan);
         }
         AST::Struct(s) => {
-            loan = allNamesInAST(&s, loan);
+            loan = all_names_in_ast(&s, loan);
         }
         AST::Union(u) => {
-            loan = allNamesInAST(&u, loan);
+            loan = all_names_in_ast(&u, loan);
         }
         AST::Int(i) => {}
         AST::Float(f) => {}
@@ -443,10 +443,6 @@ fn error_global_name_repetition(mut loagn: Vec<String>) -> Result<(), String> {
         }
     }
     Ok(())
-}
-
-fn warning_variable_declared_but_not_used() -> () {
-    //TODO
 }
 
 fn warningUnusedLabel() -> () {}

@@ -5,10 +5,14 @@ use std::fs;
 extern crate lalrpop_util;
 lalrpop_mod!(pub grammar);
 pub mod ast;
+pub mod codeGeneration;
 pub mod executor;
 pub mod nameChecker;
+pub mod optimisation;
 pub mod typeChecker;
+use crate::codeGeneration::main_code_generation;
 use crate::nameChecker::name_checker_main;
+use crate::optimisation::optimisation_main;
 use crate::typeChecker::type_checker_main;
 fn compilation_phases(input: String) -> () {
     println!("PHASE 1: syntax parse");
@@ -17,7 +21,7 @@ fn compilation_phases(input: String) -> () {
     match &ast {
         Ok(a) => {
             // println!("Phase 1 ended succesfully. AST:\n {:?}", ast1);
-            ast::display_Vec_AST(&a, 0);
+            ast::display_vec_ast(&a, 0);
         }
         Err(err) => {
             println!("Phase 1 (syntax parse) ended with an error:\n{err}.\nAborting compilation.");
@@ -25,7 +29,7 @@ fn compilation_phases(input: String) -> () {
         }
     }
     println!("PHASE 2: name checker");
-    let ast = ast.unwrap();
+    let mut ast = ast.unwrap();
     match name_checker_main(&ast) {
         Err(s) => {
             println!("Phase 2 (name checker) ended with an error:\n{s}.\nAborting compilation.");
@@ -44,8 +48,10 @@ fn compilation_phases(input: String) -> () {
     }
     // println!("PHASE 5: error checker");
     // println!("PHASE 6: possible undefined behaviour");
-    // println!("PHASE 7: optimisation");
-    // println!("PHASE 8: code generation");
+    println!("PHASE 7: optimisation");
+    let ast = optimisation_main(ast);
+    println!("PHASE 8: code generation");
+    let ast = main_code_generation(ast);
     // println!("PHASE 9: code execution");
     // executorMain();
     ()
@@ -63,7 +69,7 @@ fn main() {
     }
 }
 #[test]
-fn lall_grammar_test() {
+fn lll_grammar_test() {
     assert!(grammar::TopParser::new()
         .parse("fn main()->Unit{declare.i32(celsius);}")
         .is_ok());

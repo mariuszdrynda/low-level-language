@@ -132,8 +132,8 @@ fn check_all_types(ast: &Vec<Box<AST>>) -> Result<(), String> {
     Ok(()) //TODO
 }
 
-fn error_case_type_mismatch() -> () {}
+// fn error_case_type_mismatch() -> () {}
 
-fn error_recursive_field_in_a_struct() -> () {}
+// fn error_recursive_field_in_a_struct() -> () {}
 
-fn error_function_call_type_mismatch() -> () {}
+// fn error_function_call_type_mismatch() -> () {}

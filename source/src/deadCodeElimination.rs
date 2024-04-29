@@ -1,4 +1,12 @@
-fn unusedGlobalVariable() -> () {}
-fn unusedFunction() -> () {}
-fn unusedVariable() -> () {}
-fn codeAfterReturn() -> () {}
+fn unusedGlobalVariable() -> () {
+    todo!()
+}
+fn unusedFunction() -> () {
+    todo!()
+}
+fn unusedVariable() -> () {
+    todo!()
+}
+fn codeAfterReturn() -> () {
+    todo!()
+}
