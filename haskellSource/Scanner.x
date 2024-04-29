@@ -1,5 +1,5 @@
 {
-module Scanner (scannerMain) where
+module Scanner where
 }
 
 %wrapper "basic"
@@ -20,7 +20,14 @@ tokens :-
   match                         { \s -> TokMatch }
   $digit+ . $digit+             { \s -> TokFloat (read s) }
   $digit+                       { \s -> TokInt (read s) }
-  [\=\;\,\{\}\(\)]              { \s -> TokSym (head s) }
+  =                             { \s -> TokEq }
+  \;                            { \s -> TokSemicolon }
+  :                             { \s -> TokDC }
+  \,                            { \s -> TokComma }
+  \{                            { \s -> TokLB }
+  \}                            { \s -> TokRB }
+  \(                            { \s -> TokenLParen }
+  \)                            { \s -> TokenRParen }
   $alpha [$alpha $digit \_ \']* { \s -> TokId s }
 --TODO char
 --TODO string
@@ -28,6 +35,14 @@ tokens :-
 {
 data Token
   = TokStruct
+  | TokEq
+  | TokSemicolon
+  | TokComma
+  | TokDC
+  | TokLB
+  | TokRB
+  | TokenLParen
+  | TokenRParen
   | TokVar
   | TokArrow
   | TokUnion

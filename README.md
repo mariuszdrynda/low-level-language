@@ -3,7 +3,7 @@ Low Level Language is an intermediate representation for higher level languages.
 
 # Goal
 
-Goal is to create as simple as possible programming language that could serve as intermediate representation for other, higher level function. This is a way to demonstrate that all (or almost all) of languages features could be replaced by simple, but powerfull mechanisms.
+Goal is to create as simple as possible programming language that could serve as intermediate representation for other, higher level programming languages. This is a way to demonstrate that all (or almost all) of languages features could be replaced by simple, but powerfull mechanisms.
 
 Second, and more impotant, is to study different possibilities of optimization and safety
 
@@ -267,7 +267,7 @@ List of effects:
 
 # Supported backends
 
-LLL is designed as a backend language. When it's finished it will generate executables, but for now it will use other language as backend (LLVM IR, QBE, etc., still need to figure out which one)
+LLL is designed as a backend language. When it's finished it will generate executables, but for now it will use other language as backend (LLVM IR).
 
 # What and why this language doesn't support?
 
